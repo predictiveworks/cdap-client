@@ -25,4 +25,4 @@ Threat Hunting e.g. based on Windows Event Logs (and of course other data source
 
 The [Elasticsearch Plugin](https://github.com/skrusche63/elastic-insight) connects these applications to the ELK stack. Applications can be started or stopped, monitored and results can be explored.
 
-![alt Basic Threat Hunting with CDAP](https://raw.github.com/skrusche63/cdap-client/master/images/threat-hunting.svg)
+![alt Basic Threat Hunting with CDAP](https://github.com/skrusche63/cdap-client/blob/master/images/threat-hunting.svg)
