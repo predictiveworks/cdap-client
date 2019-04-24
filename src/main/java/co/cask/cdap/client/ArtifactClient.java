@@ -36,10 +36,10 @@ import co.cask.cdap.client.common.NotFoundException;
 import co.cask.cdap.client.common.UnauthenticatedException;
 import co.cask.cdap.client.proto.ApplicationClassSummary;
 import co.cask.cdap.client.proto.ArtifactSummary;
+import co.cask.cdap.client.proto.PluginInfo;
 import co.cask.cdap.client.proto.PluginSummary;
 import co.cask.cdap.internal.io.SchemaTypeAdapter;
 import co.cask.cdap.proto.artifact.ApplicationClassInfo;
-import co.cask.cdap.proto.artifact.PluginInfo;
 import co.cask.cdap.proto.id.ArtifactId;
 import co.cask.cdap.proto.id.NamespaceId;
 /*
@@ -75,19 +75,12 @@ import javax.inject.Inject;
 @Beta
 public class ArtifactClient {
 
-	// TODO The subsequent approach to deserialize HTTP response is not working
-
 	private static final Type APPCLASS_INFOS_TYPE = new TypeToken<List<ApplicationClassInfo>>() {
 		private static final long serialVersionUID = 6865669976410227162L;
 	}.getType();
 
 	private static final Type EXTENSIONS_TYPE = new TypeToken<List<String>>() {
 		private static final long serialVersionUID = -991592998848417037L;
-	}.getType();
-
-	private static final Type PLUGIN_INFOS_TYPE = new TypeToken<List<PluginInfo>>() {
-
-		private static final long serialVersionUID = 8932079376334126620L;
 	}.getType();
 
 	private static final Gson GSON = new GsonBuilder().registerTypeAdapter(Schema.class, new SchemaTypeAdapter())
@@ -522,7 +515,7 @@ public class ArtifactClient {
 		 */
 		List<Map<String, Object>> records = ObjectResponse
 				.fromJsonBody(response, new TypeToken<List<Map<String, Object>>>() {
-					private static final long serialVersionUID = 1L;
+					private static final long serialVersionUID = -8431723712928585489L;
 				}).getResponseObject();
 
 		List<PluginSummary> result = new ArrayList<PluginSummary>();
@@ -600,7 +593,22 @@ public class ArtifactClient {
 		if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
 			throw new NotFoundException(response.getResponseBodyAsString());
 		}
-		return ObjectResponse.<List<PluginInfo>>fromJsonBody(response, PLUGIN_INFOS_TYPE).getResponseObject();
+		/*
+		 * Extraction of response body changed, as initial implementation has an issue
+		 * with Gson
+		 */
+		List<Map<String, Object>> records = ObjectResponse
+				.fromJsonBody(response, new TypeToken<List<Map<String, Object>>>() {
+					private static final long serialVersionUID = -5771612015111893485L;
+				}).getResponseObject();
+
+		List<PluginInfo> result = new ArrayList<PluginInfo>();
+		for (Map<String, Object> record : records) {
+			result.add(new PluginInfo(record));
+		}
+
+		return result;
+
 	}
 
 	/**
