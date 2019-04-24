@@ -16,6 +16,8 @@ package co.cask.cdap.client.proto;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -39,7 +41,7 @@ public class PluginInfo extends PluginSummary {
 		if (record.containsKey("configFieldName"))
 			this.configFieldName = (String) record.get("configFieldName");
 
-		this.endpoints = (Set<String>) record.get("endpoints");
+		this.endpoints = new HashSet<String>((List<String>) record.get("endpoints"));
 
 		this.properties = new HashMap<String, PluginPropertyField>();
 
