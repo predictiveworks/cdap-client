@@ -22,10 +22,10 @@ public class PluginDetail {
 	private final String name;
 	private final String type;
 
-	public PluginDetail(Map<String, Object> plugin) {
-		this.id = (String) plugin.get("id");
-		this.name = (String) plugin.get("name");
-		this.type = (String) plugin.get("type");
+	public PluginDetail(Map<String, Object> record) {
+		this.id = (String) record.get("id");
+		this.name = (String) record.get("name");
+		this.type = (String) record.get("type");
 	}
 
 	public String getId() {

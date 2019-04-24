@@ -15,7 +15,6 @@ package co.cask.cdap.client.proto;
  * the License.
  */
 
-import co.cask.cdap.api.annotation.Beta;
 import co.cask.cdap.api.artifact.ArtifactScope;
 
 import java.util.Map;
@@ -24,7 +23,6 @@ import java.util.Objects;
 /**
  * Represents an artifact returned by /artifacts and /artifacts/{artifact-name}.
  */
-@Beta
 public class ArtifactSummary {
   protected final String name;
   protected final String version;

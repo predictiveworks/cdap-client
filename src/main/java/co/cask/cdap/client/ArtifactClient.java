@@ -36,10 +36,10 @@ import co.cask.cdap.client.common.NotFoundException;
 import co.cask.cdap.client.common.UnauthenticatedException;
 import co.cask.cdap.client.proto.ApplicationClassSummary;
 import co.cask.cdap.client.proto.ArtifactSummary;
+import co.cask.cdap.client.proto.PluginSummary;
 import co.cask.cdap.internal.io.SchemaTypeAdapter;
 import co.cask.cdap.proto.artifact.ApplicationClassInfo;
 import co.cask.cdap.proto.artifact.PluginInfo;
-import co.cask.cdap.proto.artifact.PluginSummary;
 import co.cask.cdap.proto.id.ArtifactId;
 import co.cask.cdap.proto.id.NamespaceId;
 /*
@@ -76,17 +76,13 @@ import javax.inject.Inject;
 public class ArtifactClient {
 
 	// TODO The subsequent approach to deserialize HTTP response is not working
-	
+
 	private static final Type APPCLASS_INFOS_TYPE = new TypeToken<List<ApplicationClassInfo>>() {
 		private static final long serialVersionUID = 6865669976410227162L;
 	}.getType();
 
 	private static final Type EXTENSIONS_TYPE = new TypeToken<List<String>>() {
 		private static final long serialVersionUID = -991592998848417037L;
-	}.getType();
-
-	private static final Type PLUGIN_SUMMARIES_TYPE = new TypeToken<List<PluginSummary>>() {
-		private static final long serialVersionUID = -7736564386322893574L;
 	}.getType();
 
 	private static final Type PLUGIN_INFOS_TYPE = new TypeToken<List<PluginInfo>>() {
@@ -159,15 +155,16 @@ public class ArtifactClient {
 			throw new NotFoundException(namespace);
 		}
 		/*
-		 * Extraction of response body changed, as initial 
-		 * implementation has an issue with Gson
+		 * Extraction of response body changed, as initial implementation has an issue
+		 * with Gson
 		 */
-		List<Map<String,Object>> records = ObjectResponse.fromJsonBody(response, new TypeToken<List<Map<String, Object>>>() {
-			private static final long serialVersionUID = -8431723712928585489L;
-		}).getResponseObject();
-		
+		List<Map<String, Object>> records = ObjectResponse
+				.fromJsonBody(response, new TypeToken<List<Map<String, Object>>>() {
+					private static final long serialVersionUID = -8431723712928585489L;
+				}).getResponseObject();
+
 		List<ArtifactSummary> result = new ArrayList<ArtifactSummary>();
-		for (Map<String,Object> record:records) {
+		for (Map<String, Object> record : records) {
 			result.add(new ArtifactSummary(record));
 		}
 
@@ -227,15 +224,16 @@ public class ArtifactClient {
 			throw new ArtifactNotFoundException(namespace, artifactName);
 		}
 		/*
-		 * Extraction of response body changed, as initial 
-		 * implementation has an issue with Gson
+		 * Extraction of response body changed, as initial implementation has an issue
+		 * with Gson
 		 */
-		List<Map<String,Object>> records = ObjectResponse.fromJsonBody(response, new TypeToken<List<Map<String, Object>>>() {
-			private static final long serialVersionUID = -8431723712928585489L;
-		}).getResponseObject();
-		
+		List<Map<String, Object>> records = ObjectResponse
+				.fromJsonBody(response, new TypeToken<List<Map<String, Object>>>() {
+					private static final long serialVersionUID = -8431723712928585489L;
+				}).getResponseObject();
+
 		List<ArtifactSummary> result = new ArrayList<ArtifactSummary>();
-		for (Map<String,Object> record:records) {
+		for (Map<String, Object> record : records) {
 			result.add(new ArtifactSummary(record));
 		}
 
@@ -342,20 +340,21 @@ public class ArtifactClient {
 
 		HttpResponse response = restClient.execute(HttpMethod.GET, url, config.getAccessToken());
 		/*
-		 * Extraction of response body changed, as initial 
-		 * implementation has an issue with Gson
+		 * Extraction of response body changed, as initial implementation has an issue
+		 * with Gson
 		 */
-		List<Map<String,Object>> records = ObjectResponse.fromJsonBody(response, new TypeToken<List<Map<String, Object>>>() {
-			private static final long serialVersionUID = -8431723712928585489L;
-		}).getResponseObject();
-		
+		List<Map<String, Object>> records = ObjectResponse
+				.fromJsonBody(response, new TypeToken<List<Map<String, Object>>>() {
+					private static final long serialVersionUID = -8431723712928585489L;
+				}).getResponseObject();
+
 		List<ApplicationClassSummary> result = new ArrayList<ApplicationClassSummary>();
-		for (Map<String,Object> record:records) {
+		for (Map<String, Object> record : records) {
 			result.add(new ApplicationClassSummary(record));
 		}
 
 		return result;
-		
+
 	}
 
 	/**
@@ -517,7 +516,22 @@ public class ArtifactClient {
 		if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
 			throw new ArtifactNotFoundException(artifactId);
 		}
-		return ObjectResponse.<List<PluginSummary>>fromJsonBody(response, PLUGIN_SUMMARIES_TYPE).getResponseObject();
+		/*
+		 * Extraction of response body changed, as initial implementation has an issue
+		 * with Gson
+		 */
+		List<Map<String, Object>> records = ObjectResponse
+				.fromJsonBody(response, new TypeToken<List<Map<String, Object>>>() {
+					private static final long serialVersionUID = 1L;
+				}).getResponseObject();
+
+		List<PluginSummary> result = new ArrayList<PluginSummary>();
+		for (Map<String, Object> record : records) {
+			result.add(new PluginSummary(record));
+		}
+
+		return result;
+
 	}
 
 	/**
