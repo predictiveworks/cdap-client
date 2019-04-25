@@ -53,255 +53,321 @@ import java.util.Map;
 @Beta
 public class PreferencesClient {
 
-  private static final Gson GSON = new Gson();
+	private static final Gson GSON = new Gson();
 
-  private final RESTClient restClient;
-  private final ClientConfig config;
+	private final RESTClient restClient;
+	private final ClientConfig config;
 
-  @Inject
-  public PreferencesClient(ClientConfig config, RESTClient restClient) {
-    this.config = config;
-    this.restClient = restClient;
-  }
+	@Inject
+	public PreferencesClient(ClientConfig config, RESTClient restClient) {
+		this.config = config;
+		this.restClient = restClient;
+	}
 
-  public PreferencesClient(ClientConfig config) {
-    this(config, new RESTClient(config));
-  }
+	public PreferencesClient(ClientConfig config) {
+		this(config, new RESTClient(config));
+	}
 
-  /**
-   * Returns the Preferences stored at the Instance Level.
-   *
-   * @return map of key-value pairs
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   */
-  public Map<String, String> getInstancePreferences()
-    throws IOException, UnauthenticatedException, UnauthorizedException {
-    URL url = config.resolveURLV3("preferences");
-    HttpResponse response = restClient.execute(HttpMethod.GET, url, config.getAccessToken());
-    return ObjectResponse.fromJsonBody(response, new TypeToken<Map<String, String>>() { }).getResponseObject();
-  }
+	/**
+	 * Returns the Preferences stored at the Instance Level.
+	 *
+	 * @return map of key-value pairs
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 */
+	public Map<String, String> getInstancePreferences()
+			throws IOException, UnauthenticatedException, UnauthorizedException {
+		URL url = config.resolveURLV3("preferences");
+		HttpResponse response = restClient.execute(HttpMethod.GET, url, config.getAccessToken());
+		return ObjectResponse.fromJsonBody(response, new TypeToken<Map<String, String>>() {
+			private static final long serialVersionUID = 4480789538400895079L;
+		}).getResponseObject();
+	}
 
-  /**
-   * Sets Preferences at the Instance Level.
-   *
-   * @param preferences map of key-value pairs
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   */
-  public void setInstancePreferences(Map<String, String> preferences)
-    throws IOException, UnauthenticatedException, UnauthorizedException {
-    URL url = config.resolveURLV3("preferences");
-    restClient.execute(HttpMethod.PUT, url, GSON.toJson(preferences), null, config.getAccessToken());
-  }
+	/**
+	 * Sets Preferences at the Instance Level.
+	 *
+	 * @param preferences
+	 *            map of key-value pairs
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 */
+	public void setInstancePreferences(Map<String, String> preferences)
+			throws IOException, UnauthenticatedException, UnauthorizedException {
+		URL url = config.resolveURLV3("preferences");
+		restClient.execute(HttpMethod.PUT, url, GSON.toJson(preferences), null, config.getAccessToken());
+	}
 
-  /**
-   * Deletes Preferences at the Instance Level.
-   *
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   */
-  public void deleteInstancePreferences() throws IOException, UnauthenticatedException, UnauthorizedException {
-    URL url = config.resolveURLV3("preferences");
-    restClient.execute(HttpMethod.DELETE, url, config.getAccessToken());
-  }
+	/**
+	 * Deletes Preferences at the Instance Level.
+	 *
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 */
+	public void deleteInstancePreferences() throws IOException, UnauthenticatedException, UnauthorizedException {
+		URL url = config.resolveURLV3("preferences");
+		restClient.execute(HttpMethod.DELETE, url, config.getAccessToken());
+	}
 
-  /**
-   * Returns the Preferences stored at the Namespace Level.
-   *
-   * @param namespace Namespace Id
-   * @param resolved Set to True if collapsed/resolved properties are desired
-   * @return map of key-value pairs
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   * @throws NotFoundException if the requested namespace is not found
-   */
-  public Map<String, String> getNamespacePreferences(NamespaceId namespace, boolean resolved)
-    throws IOException, UnauthenticatedException, NotFoundException, UnauthorizedException {
+	/**
+	 * Returns the Preferences stored at the Namespace Level.
+	 *
+	 * @param namespace
+	 *            Namespace Id
+	 * @param resolved
+	 *            Set to True if collapsed/resolved properties are desired
+	 * @return map of key-value pairs
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 * @throws NotFoundException
+	 *             if the requested namespace is not found
+	 */
+	public Map<String, String> getNamespacePreferences(NamespaceId namespace, boolean resolved)
+			throws IOException, UnauthenticatedException, NotFoundException, UnauthorizedException {
 
-    String res = Boolean.toString(resolved);
-    URL url = config.resolveURLV3(String.format("namespaces/%s/preferences?resolved=%s",
-                                                namespace.getNamespace(), res));
-    HttpResponse response = restClient.execute(HttpMethod.GET, url, config.getAccessToken(),
-                                               HttpURLConnection.HTTP_NOT_FOUND);
-    if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-      throw new NotFoundException(namespace);
-    }
-    return ObjectResponse.fromJsonBody(response, new TypeToken<Map<String, String>>() { }).getResponseObject();
-  }
+		String res = Boolean.toString(resolved);
+		URL url = config
+				.resolveURLV3(String.format("namespaces/%s/preferences?resolved=%s", namespace.getNamespace(), res));
+		HttpResponse response = restClient.execute(HttpMethod.GET, url, config.getAccessToken(),
+				HttpURLConnection.HTTP_NOT_FOUND);
+		if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+			throw new NotFoundException(namespace);
+		}
+		return ObjectResponse.fromJsonBody(response, new TypeToken<Map<String, String>>() {
+			private static final long serialVersionUID = 1L;
+		}).getResponseObject();
+	}
 
-  /**
-   * Sets Preferences at the Namespace Level.
-   *
-   * @param namespace Namespace Id
-   * @param preferences map of key-value pairs
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   * @throws NotFoundException if the requested namespace is not found
-   */
-  public void setNamespacePreferences(NamespaceId namespace, Map<String, String> preferences) throws IOException,
-    UnauthenticatedException, NotFoundException, UnauthorizedException {
-    URL url = config.resolveURLV3(String.format("namespaces/%s/preferences", namespace.getNamespace()));
-    HttpResponse response = restClient.execute(HttpMethod.PUT, url, GSON.toJson(preferences), null,
-                                               config.getAccessToken(), HttpURLConnection.HTTP_NOT_FOUND);
-    if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-      throw new NotFoundException(namespace);
-    }
-  }
+	/**
+	 * Sets Preferences at the Namespace Level.
+	 *
+	 * @param namespace
+	 *            Namespace Id
+	 * @param preferences
+	 *            map of key-value pairs
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 * @throws NotFoundException
+	 *             if the requested namespace is not found
+	 */
+	public void setNamespacePreferences(NamespaceId namespace, Map<String, String> preferences)
+			throws IOException, UnauthenticatedException, NotFoundException, UnauthorizedException {
+		URL url = config.resolveURLV3(String.format("namespaces/%s/preferences", namespace.getNamespace()));
+		HttpResponse response = restClient.execute(HttpMethod.PUT, url, GSON.toJson(preferences), null,
+				config.getAccessToken(), HttpURLConnection.HTTP_NOT_FOUND);
+		if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+			throw new NotFoundException(namespace);
+		}
+	}
 
-  /**
-   * Deletes Preferences at the Namespace Level.
-   *
-   * @param namespace Namespace Id
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   * @throws NotFoundException if the requested namespace is not found
-   */
-  public void deleteNamespacePreferences(NamespaceId namespace)
-    throws IOException, UnauthenticatedException, NotFoundException, UnauthorizedException {
+	/**
+	 * Deletes Preferences at the Namespace Level.
+	 *
+	 * @param namespace
+	 *            Namespace Id
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 * @throws NotFoundException
+	 *             if the requested namespace is not found
+	 */
+	public void deleteNamespacePreferences(NamespaceId namespace)
+			throws IOException, UnauthenticatedException, NotFoundException, UnauthorizedException {
 
-    URL url = config.resolveURLV3(String.format("namespaces/%s/preferences", namespace.getNamespace()));
-    HttpResponse response = restClient.execute(HttpMethod.DELETE, url, config.getAccessToken(),
-                                               HttpURLConnection.HTTP_NOT_FOUND);
-    if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-      throw new NotFoundException(namespace);
-    }
-  }
+		URL url = config.resolveURLV3(String.format("namespaces/%s/preferences", namespace.getNamespace()));
+		HttpResponse response = restClient.execute(HttpMethod.DELETE, url, config.getAccessToken(),
+				HttpURLConnection.HTTP_NOT_FOUND);
+		if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+			throw new NotFoundException(namespace);
+		}
+	}
 
-  /**
-   * Returns the Preferences stored at the Application Level.
-   *
-   * @param application Application Id
-   * @param resolved Set to True if collapsed/resolved properties are desired
-   * @return map of key-value pairs
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   * @throws ApplicationNotFoundException if the requested application is not found
-   */
-  public Map<String, String> getApplicationPreferences(ApplicationId application, boolean resolved)
-    throws IOException, UnauthenticatedException, NotFoundException, UnauthorizedException {
+	/**
+	 * Returns the Preferences stored at the Application Level.
+	 *
+	 * @param application
+	 *            Application Id
+	 * @param resolved
+	 *            Set to True if collapsed/resolved properties are desired
+	 * @return map of key-value pairs
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 * @throws ApplicationNotFoundException
+	 *             if the requested application is not found
+	 */
+	public Map<String, String> getApplicationPreferences(ApplicationId application, boolean resolved)
+			throws IOException, UnauthenticatedException, NotFoundException, UnauthorizedException {
 
-    String res = Boolean.toString(resolved);
-    URL url = config.resolveNamespacedURLV3(application.getParent(),
-                                            String.format("/apps/%s/preferences?resolved=%s",
-                                                          application.getApplication(), res));
-    HttpResponse response = restClient.execute(HttpMethod.GET, url, config.getAccessToken(),
-                                               HttpURLConnection.HTTP_NOT_FOUND);
-    if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-      throw new NotFoundException(application);
-    }
-    return ObjectResponse.fromJsonBody(response, new TypeToken<Map<String, String>>() { }).getResponseObject();
-  }
+		String res = Boolean.toString(resolved);
+		URL url = config.resolveNamespacedURLV3(application.getParent(),
+				String.format("/apps/%s/preferences?resolved=%s", application.getApplication(), res));
+		HttpResponse response = restClient.execute(HttpMethod.GET, url, config.getAccessToken(),
+				HttpURLConnection.HTTP_NOT_FOUND);
+		if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+			throw new NotFoundException(application);
+		}
+		return ObjectResponse.fromJsonBody(response, new TypeToken<Map<String, String>>() {
+			private static final long serialVersionUID = -1880905005588418742L;
+		}).getResponseObject();
+	}
 
-  /**
-   * Sets Preferences at the Application Level.
-   *
-   * @param application Application Id
-   * @param preferences map of key-value pairs
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   * @throws NotFoundException if the requested application or namespace is not found
-   */
-  public void setApplicationPreferences(ApplicationId application, Map<String, String> preferences)
-    throws IOException, UnauthenticatedException, NotFoundException, UnauthorizedException {
+	/**
+	 * Sets Preferences at the Application Level.
+	 *
+	 * @param application
+	 *            Application Id
+	 * @param preferences
+	 *            map of key-value pairs
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 * @throws NotFoundException
+	 *             if the requested application or namespace is not found
+	 */
+	public void setApplicationPreferences(ApplicationId application, Map<String, String> preferences)
+			throws IOException, UnauthenticatedException, NotFoundException, UnauthorizedException {
 
-    URL url = config.resolveNamespacedURLV3(application.getParent(),
-                                            String.format("/apps/%s/preferences", application.getApplication()));
-    HttpResponse response = restClient.execute(HttpMethod.PUT, url, GSON.toJson(preferences), null,
-                                               config.getAccessToken(), HttpURLConnection.HTTP_NOT_FOUND);
-    if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-      throw new NotFoundException(application);
-    }
-  }
+		URL url = config.resolveNamespacedURLV3(application.getParent(),
+				String.format("/apps/%s/preferences", application.getApplication()));
+		HttpResponse response = restClient.execute(HttpMethod.PUT, url, GSON.toJson(preferences), null,
+				config.getAccessToken(), HttpURLConnection.HTTP_NOT_FOUND);
+		if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+			throw new NotFoundException(application);
+		}
+	}
 
-  /**
-   * Deletes Preferences at the Application Level.
-   *
-   * @param application Application Id
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   * @throws NotFoundException if the request application or namespace is not found
-   */
-  public void deleteApplicationPreferences(ApplicationId application)
-    throws IOException, UnauthenticatedException, NotFoundException, UnauthorizedException {
+	/**
+	 * Deletes Preferences at the Application Level.
+	 *
+	 * @param application
+	 *            Application Id
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 * @throws NotFoundException
+	 *             if the request application or namespace is not found
+	 */
+	public void deleteApplicationPreferences(ApplicationId application)
+			throws IOException, UnauthenticatedException, NotFoundException, UnauthorizedException {
 
-    URL url = config.resolveNamespacedURLV3(application.getParent(),
-                                            String.format("/apps/%s/preferences", application.getApplication()));
-    HttpResponse response = restClient.execute(HttpMethod.DELETE, url, config.getAccessToken(),
-                                               HttpURLConnection.HTTP_NOT_FOUND);
-    if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-      throw new NotFoundException(application);
-    }
-  }
+		URL url = config.resolveNamespacedURLV3(application.getParent(),
+				String.format("/apps/%s/preferences", application.getApplication()));
+		HttpResponse response = restClient.execute(HttpMethod.DELETE, url, config.getAccessToken(),
+				HttpURLConnection.HTTP_NOT_FOUND);
+		if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+			throw new NotFoundException(application);
+		}
+	}
 
-  /**
-   * Returns the Preferences stored at the Program Level.
-   *
-   * @param program Program Id
-   * @param resolved Set to True if collapsed/resolved properties are desired
-   * @return map of key-value pairs
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   * @throws ProgramNotFoundException if the requested program is not found
-   */
-  public Map<String, String> getProgramPreferences(ProgramId program, boolean resolved)
-    throws IOException, UnauthenticatedException, ProgramNotFoundException, UnauthorizedException {
+	/**
+	 * Returns the Preferences stored at the Program Level.
+	 *
+	 * @param program
+	 *            Program Id
+	 * @param resolved
+	 *            Set to True if collapsed/resolved properties are desired
+	 * @return map of key-value pairs
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 * @throws ProgramNotFoundException
+	 *             if the requested program is not found
+	 */
+	public Map<String, String> getProgramPreferences(ProgramId program, boolean resolved)
+			throws IOException, UnauthenticatedException, ProgramNotFoundException, UnauthorizedException {
 
-    String res = Boolean.toString(resolved);
-    URL url = config.resolveNamespacedURLV3(program.getNamespaceId(),
-                                            String.format("/apps/%s/%s/%s/preferences?resolved=%s",
-                                                          program.getApplication(),
-                                                          program.getType().getCategoryName(),
-                                                          program.getProgram(), res));
-    HttpResponse response = restClient.execute(HttpMethod.GET, url, config.getAccessToken(),
-                                               HttpURLConnection.HTTP_NOT_FOUND);
-    if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-      throw new ProgramNotFoundException(program);
-    }
-    return ObjectResponse.fromJsonBody(response, new TypeToken<Map<String, String>>() { }).getResponseObject();
-  }
+		String res = Boolean.toString(resolved);
+		URL url = config.resolveNamespacedURLV3(program.getNamespaceId(),
+				String.format("/apps/%s/%s/%s/preferences?resolved=%s", program.getApplication(),
+						program.getType().getCategoryName(), program.getProgram(), res));
+		HttpResponse response = restClient.execute(HttpMethod.GET, url, config.getAccessToken(),
+				HttpURLConnection.HTTP_NOT_FOUND);
+		if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+			throw new ProgramNotFoundException(program);
+		}
+		return ObjectResponse.fromJsonBody(response, new TypeToken<Map<String, String>>() {
 
-  /**
-   * Sets Preferences at the Program Level.
-   *
-   * @param program Program Id
-   * @param preferences map of key-value pairs
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   * @throws ProgramNotFoundException if the requested program is not found
-   */
-  public void setProgramPreferences(ProgramId program, Map<String, String> preferences)
-    throws IOException, UnauthenticatedException, ProgramNotFoundException, UnauthorizedException {
-    URL url = config.resolveNamespacedURLV3(program.getNamespaceId(),
-                                            String.format("/apps/%s/%s/%s/preferences",
-                                                          program.getApplication(),
-                                                          program.getType().getCategoryName(), program.getProgram()));
-    HttpResponse response = restClient.execute(HttpMethod.PUT, url, GSON.toJson(preferences), null,
-                                               config.getAccessToken(), HttpURLConnection.HTTP_NOT_FOUND);
-    if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-      throw new ProgramNotFoundException(program);
-    }
-  }
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+		}).getResponseObject();
+	}
 
-  /**
-   * Deletes Preferences at the Program Level.
-   *
-   * @param program Program Id
-   * @throws IOException if a network error occurred
-   * @throws UnauthenticatedException if the request is not authorized successfully in the gateway server
-   * @throws ProgramNotFoundException if the requested program is not found
-   */
-  public void deleteProgramPreferences(ProgramId program)
-    throws IOException, UnauthenticatedException, ProgramNotFoundException, UnauthorizedException {
+	/**
+	 * Sets Preferences at the Program Level.
+	 *
+	 * @param program
+	 *            Program Id
+	 * @param preferences
+	 *            map of key-value pairs
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 * @throws ProgramNotFoundException
+	 *             if the requested program is not found
+	 */
+	public void setProgramPreferences(ProgramId program, Map<String, String> preferences)
+			throws IOException, UnauthenticatedException, ProgramNotFoundException, UnauthorizedException {
+		URL url = config.resolveNamespacedURLV3(program.getNamespaceId(), String.format("/apps/%s/%s/%s/preferences",
+				program.getApplication(), program.getType().getCategoryName(), program.getProgram()));
+		HttpResponse response = restClient.execute(HttpMethod.PUT, url, GSON.toJson(preferences), null,
+				config.getAccessToken(), HttpURLConnection.HTTP_NOT_FOUND);
+		if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+			throw new ProgramNotFoundException(program);
+		}
+	}
 
-    URL url = config.resolveNamespacedURLV3(program.getNamespaceId(),
-                                            String.format("/apps/%s/%s/%s/preferences",
-                                                          program.getApplication(),
-                                                          program.getType().getCategoryName(), program.getProgram()));
-    HttpResponse response = restClient.execute(HttpMethod.DELETE, url, config.getAccessToken(),
-                                               HttpURLConnection.HTTP_NOT_FOUND);
-    if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-      throw new ProgramNotFoundException(program);
-    }
-  }
+	/**
+	 * Deletes Preferences at the Program Level.
+	 *
+	 * @param program
+	 *            Program Id
+	 * @throws IOException
+	 *             if a network error occurred
+	 * @throws UnauthenticatedException
+	 *             if the request is not authorized successfully in the gateway
+	 *             server
+	 * @throws ProgramNotFoundException
+	 *             if the requested program is not found
+	 */
+	public void deleteProgramPreferences(ProgramId program)
+			throws IOException, UnauthenticatedException, ProgramNotFoundException, UnauthorizedException {
+
+		URL url = config.resolveNamespacedURLV3(program.getNamespaceId(), String.format("/apps/%s/%s/%s/preferences",
+				program.getApplication(), program.getType().getCategoryName(), program.getProgram()));
+		HttpResponse response = restClient.execute(HttpMethod.DELETE, url, config.getAccessToken(),
+				HttpURLConnection.HTTP_NOT_FOUND);
+		if (response.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+			throw new ProgramNotFoundException(program);
+		}
+	}
 }
