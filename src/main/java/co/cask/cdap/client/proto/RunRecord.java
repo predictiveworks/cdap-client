@@ -46,19 +46,19 @@ public class RunRecord {
 	public RunRecord(Map<String, Object> record) {
 
 		this.pid = (String) record.get("runid");
-		this.startTs = (Long) record.get("starting");
+		this.startTs = ((Double) record.get("starting")).longValue();
 
 		if (record.containsKey("start"))
-			this.runTs = (Long) record.get("start");
+			this.runTs = ((Double) record.get("start")).longValue();
 
 		if (record.containsKey("end"))
-			this.stopTs = (Long) record.get("end");
+			this.stopTs = ((Double) record.get("end")).longValue();
 
 		if (record.containsKey("suspend"))
-			this.suspendTs = (Long) record.get("suspend");
+			this.suspendTs = ((Double) record.get("suspend")).longValue();
 
 		if (record.containsKey("resume"))
-			this.resumeTs = (Long) record.get("resume");
+			this.resumeTs = ((Double) record.get("resume")).longValue();
 
 		this.status = (String) record.get("status");
 		this.properties = (Map<String, String>) record.get("properties");

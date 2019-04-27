@@ -36,7 +36,7 @@ public class MetricQueryResult {
 		this.endTime = (Double) result.get("endTime");
 
 		String resolution = (String) result.get("resolution");
-		this.resolution = String.valueOf(resolution) + "s";
+		this.resolution = String.valueOf(resolution);
 
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> seriesList = (List<Map<String, Object>>) result.get("series");
