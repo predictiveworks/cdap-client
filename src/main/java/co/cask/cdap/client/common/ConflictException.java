@@ -24,20 +24,22 @@ import io.netty.handler.codec.http.HttpResponseStatus;
  */
 public class ConflictException extends Exception implements HttpErrorStatusProvider {
 
-  public ConflictException() {
-    super();
-  }
+	private static final long serialVersionUID = 4830819066774847718L;
 
-  public ConflictException(String message) {
-    super(message);
-  }
+	public ConflictException() {
+		super();
+	}
 
-  public ConflictException(String message, Throwable cause) {
-    super(message, cause);
-  }
+	public ConflictException(String message) {
+		super(message);
+	}
 
-  @Override
-  public int getStatusCode() {
-    return HttpResponseStatus.CONFLICT.code();
-  }
+	public ConflictException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	@Override
+	public int getStatusCode() {
+		return HttpResponseStatus.CONFLICT.code();
+	}
 }
